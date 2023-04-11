@@ -1,6 +1,7 @@
 // Function to parse the input text and create a tree structure
+// Function to parse the input text and create a tree structure
 function parseInputText(inputText) {
-    const lines = inputText.split("\n");
+    const lines = inputText.split("\n").filter(line => line.trim() !== "");
     const root = { name: lines[0], children: [] };
     const stack = [root];
 
@@ -23,13 +24,15 @@ function parseInputText(inputText) {
 // Function to create the mind map using D3.js
 function createMindMap(treeData) {
     // Set up SVG and D3.js tree layout
-    const width = 800;
-    const height = 600;
+    const width = 1000;
+    const height = 800;
     const svg = d3.select("body").append("svg")
         .attr("width", width)
-        .attr("height", height);
-    const g = svg.append("g");
-    const treeLayout = d3.tree().size([width, height]);
+        .attr("height", height)
+        .style("font-family", "Arial, sans-serif")
+        .style("font-size", "12px");
+    const g = svg.append("g").attr("transform", "translate(80,40)");
+    const treeLayout = d3.tree().nodeSize([100, 200]);
 
     // Generate the tree and links
     const tree = treeLayout(d3.hierarchy(treeData));
@@ -41,25 +44,31 @@ function createMindMap(treeData) {
         .enter()
         .append("path")
         .attr("class", "link")
+        .attr("fill", "none")
+        .attr("stroke", "#555")
+        .attr("stroke-opacity", 0.4)
+        .attr("stroke-width", 1.5)
         .attr("d", d3.linkHorizontal()
             .x(d => d.y)
             .y(d => d.x));
 
     // Draw nodes
-    g.selectAll(".node")
+    const nodes = g.selectAll(".node")
         .data(tree.descendants())
         .enter()
         .append("g")
         .attr("class", "node")
-        .attr("transform", d => `translate(${d.y},${d.x})`)
-        .append("circle")
-        .attr("r", 4);
+        .attr("transform", d => `translate(${d.y},${d.x})`);
+
+    // Add circles
+    nodes.append("circle")
+        .attr("r", 4)
+        .style("fill", "#999");
 
     // Add labels
-    g.selectAll(".node")
-        .append("text")
+    nodes.append("text")
+        .attr("dy", "0.31em")
         .attr("x", d => d.children ? -10 : 10)
-        .attr("y", 3)
         .attr("text-anchor", d => d.children ? "end" : "start")
         .text(d => d.data.name);
 }
