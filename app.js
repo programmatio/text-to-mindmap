@@ -24,15 +24,20 @@ function parseInputText(inputText) {
 // Function to create the mind map using D3.js
 function createMindMap(treeData) {
     // Set up SVG and D3.js tree layout
-    const width = 1000;
-    const height = 800;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
     const svg = d3.select("body").append("svg")
         .attr("width", width)
         .attr("height", height)
         .style("font-family", "Arial, sans-serif")
-        .style("font-size", "12px");
+        .style("font-size", "12px")
+        .call(d3.zoom().scaleExtent([1, 1]).on("zoom", (event) => {
+            g.attr("transform", event.transform);
+        }))
+        .append("g");
     const g = svg.append("g").attr("transform", "translate(80,40)");
     const treeLayout = d3.tree().nodeSize([100, 200]);
+
 
     // Generate the tree and links
     const tree = treeLayout(d3.hierarchy(treeData));
@@ -107,3 +112,11 @@ createMindMap(treeData);
 // Update the mind map with the new text
 const updatedText = inputText + "\n" + moreText;
 updateMindMap(updatedText);
+
+window.addEventListener("resize", () => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    d3.select("body").select("svg")
+        .attr("width", width)
+        .attr("height", height);
+});
