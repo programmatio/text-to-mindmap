@@ -79,39 +79,23 @@ function createMindMap(treeData) {
 }
 
 // Sample input text
-const inputText = `Software Engineering Principles
-1.1. Clear Software Architecture
-1.1.1. Modular Design
-1.1.2. Separation of Concerns
-1.1.3. Maintainability`;
 
-const treeData = parseInputText(inputText);
-createMindMap(treeData);
 
-// Update the mind map with more text
-const moreText = `1.1.1. Clear Software Architecture
-1.1.1.1. Definition
-1.1.1.1.1. A well-defined, organized structure of software components
-1.1.1.1.2. A blueprint for designing, building, and maintaining software systems
 
-1.1.1.2. Benefits
-1.1.1.2.1. Improved maintainability
-1.1.1.2.2. Enhanced scalability
-1.1.1.2.3. Easier understanding and communication
-1.1.1.2.4. Streamlined development process`;
 
-// Function to update the mind map with more text
-function updateMindMap(inputText) {
-// Remove the existing mind map
-d3.select("body").select("svg").remove();
-// Create a new mind map with the updated input text
-const treeData = parseInputText(inputText);
-createMindMap(treeData);
-}
+fetch('mindmap.txt')
+.then(response => response.text())
+.then(inputText => {
+    const treeData = parseInputText(inputText);
+    createMindMap(treeData);
+})
+.catch(error => {
+    console.error('Error fetching mindmap.txt:', error);
+});
 
-// Update the mind map with the new text
-const updatedText = inputText + "\n" + moreText;
-updateMindMap(updatedText);
+
+
+
 
 window.addEventListener("resize", () => {
     const width = window.innerWidth;
